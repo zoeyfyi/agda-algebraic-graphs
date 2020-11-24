@@ -298,16 +298,40 @@ module ≲-Reasoning { A : Set } where
 +-congʳ-alt : ∀ { A : Set } { G H I : Graph A } → H ≈ I → (G + H) ≈ (G + I)
 +-congʳ-alt {_} {G} {H} {I} H≈I =
   begin
-    (G + H)
+    G + H
   ≈⟨ +-comm ⟩
-    (H + G)
+    H + G
   ≈⟨ +-congˡ H≈I ⟩
-    (I + G)
+    I + G
   ≈⟨ +-comm ⟩
-    (G + I)
+    G + I
   ∎
   where open ≈-Reasoning
 
++-idem : ∀ { A : Set } { G : Graph A } → (G + G) ≈ G
++-idem {_} {G} =
+  begin
+    G + G
+  ≈⟨ ≈-comm ⇀-identˡ ⟩
+    (G + G) ⇀ ε
+  ≈⟨ +⇀-dist ⟩
+    (G ⇀ ε) + (G ⇀ ε)
+  ≈⟨ ≈-comm +-identˡ ⟩
+    ((G ⇀ ε) + (G ⇀ ε)) + ε
+  ≈⟨ ≈-comm (+-congʳ ⇀-identˡ) ⟩
+    ((G ⇀ ε) + (G ⇀ ε)) + (ε ⇀ ε)
+  ≈⟨ ≈-comm +-assoc ⟩
+    (G ⇀ ε) + ((G ⇀ ε) + (ε ⇀ ε))
+  ≈⟨ ≈-comm ⇀-decomp ⟩
+    G ⇀ (ε ⇀ ε)
+  ≈⟨ ⇀-assoc ⟩
+    (G ⇀ ε) ⇀ ε
+  ≈⟨ ⇀-identˡ ⟩
+    G ⇀ ε
+  ≈⟨ ⇀-identˡ ⟩
+    G
+  ∎
+  where open ≈-Reasoning
 ```
 
 ```
