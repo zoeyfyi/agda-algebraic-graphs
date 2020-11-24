@@ -18,6 +18,13 @@ open Eq using (_≡_; refl; sym; trans; cong; cong₂; _≢_)
 ```
 
 ```
+infixl 4 _≈_
+infixl 4 _≲_
+infixl 8 _+_
+infixl 9 _⇀_
+```
+
+```
 data Graph (A : Set) : Set where
   ε : Graph A
   Vertex : A → Graph A
@@ -107,7 +114,7 @@ A graph is a subgraph if:
 ```
 
 ```
-+≲⇀ : ∀ { A : Set } { G H : Graph A } → (G + H) ≲ (G ⇀ H)
++≲⇀ : ∀ { A : Set } { G H : Graph A } → G + H ≲ G ⇀ H
 +≲⇀ = record
         { vₗ = λ { (+ₗ x) → ⇀ₗ x ; (+ᵣ x) → ⇀ᵣ x }
         ; eₗ = λ { (+ₗ x) → ⇀ₗ x ; (+ᵣ x) → ⇀ᵣ x }
@@ -161,7 +168,7 @@ module ≲-Reasoning { A : Set } where
 ```
 
 ```
-+-comm : ∀ { A : Set } { G H : Graph A } → (G + H) ≈ (H + G)
++-comm : ∀ { A : Set } { G H : Graph A } → G + H ≈ H + G
 +-comm = record
   { vₗ = λ { (+ₗ x) → +ᵣ x ; (+ᵣ x) → +ₗ x }
   ; vᵣ = λ { (+ₗ x) → +ᵣ x ; (+ᵣ x) → +ₗ x }
@@ -169,7 +176,7 @@ module ≲-Reasoning { A : Set } where
   ; eᵣ = λ { (+ₗ x) → +ᵣ x ; (+ᵣ x) → +ₗ x }
   }
 
-+-assoc : ∀ { A : Set } { G H I : Graph A } → (G + (H + I)) ≈ ((G + H) + I)
++-assoc : ∀ { A : Set } { G H I : Graph A } → G + (H + I) ≈ (G + H) + I
 +-assoc = record
   { vₗ = λ { (+ₗ x) → +ₗ (+ₗ x) ; (+ᵣ (+ₗ x)) → +ₗ (+ᵣ x) ; (+ᵣ (+ᵣ x)) → +ᵣ x }
   ; vᵣ = λ { (+ₗ (+ₗ x)) → +ₗ x ; (+ₗ (+ᵣ x)) → +ᵣ (+ₗ x) ; (+ᵣ x) → +ᵣ (+ᵣ x) }
@@ -177,7 +184,7 @@ module ≲-Reasoning { A : Set } where
   ; eᵣ = λ { (+ₗ (+ₗ x)) → +ₗ x ; (+ₗ (+ᵣ x)) → +ᵣ (+ₗ x) ; (+ᵣ x) → +ᵣ (+ᵣ x) }
   }
   
-+-identˡ : ∀ { A : Set } { G : Graph A } → (G + ε) ≈ G
++-identˡ : ∀ { A : Set } { G : Graph A } → G + ε ≈ G
 +-identˡ = record
   { vₗ = λ { (+ₗ x) → x }
   ; vᵣ = λ x → +ₗ x
@@ -185,7 +192,7 @@ module ≲-Reasoning { A : Set } where
   ; eᵣ = +ₗ 
   }
 
-+-identʳ : ∀ { A : Set } { G : Graph A } → (ε + G) ≈ G
++-identʳ : ∀ { A : Set } { G : Graph A } → ε + G ≈ G
 +-identʳ = record
   { vₗ = λ { (+ᵣ x) → x }
   ; vᵣ = +ᵣ
@@ -193,7 +200,7 @@ module ≲-Reasoning { A : Set } where
   ; eᵣ = +ᵣ
   }
 
-+-congˡ : ∀ { A : Set } { G H I : Graph A } → G ≈ H → (G + I) ≈ (H + I)
++-congˡ : ∀ { A : Set } { G H I : Graph A } → G ≈ H → G + I ≈ H + I
 +-congˡ G≈H = record
                { vₗ = λ { (+ₗ x) → +ₗ (_≈_.vₗ G≈H x) ; (+ᵣ x) → +ᵣ x }
                ; vᵣ = λ { (+ₗ x) → +ₗ (_≈_.vᵣ G≈H x) ; (+ᵣ x) → +ᵣ x }
@@ -201,7 +208,7 @@ module ≲-Reasoning { A : Set } where
                ; eᵣ = λ { (+ₗ x) → +ₗ (_≈_.eᵣ G≈H x) ; (+ᵣ x) → +ᵣ x }
                }
 
-+-congʳ : ∀ { A : Set } { G H I : Graph A } → H ≈ I → (G + H) ≈ (G + I)
++-congʳ : ∀ { A : Set } { G H I : Graph A } → H ≈ I → G + H ≈ G + I
 +-congʳ G≈H = record
                { vₗ = λ { (+ₗ x) → +ₗ x ; (+ᵣ x) → +ᵣ (_≈_.vₗ G≈H x) }
                ; vᵣ = λ { (+ₗ x) → +ₗ x ; (+ᵣ x) → +ᵣ (_≈_.vᵣ G≈H x) }
@@ -213,7 +220,7 @@ module ≲-Reasoning { A : Set } where
 + is commutative, associative and ε is an identity element.
 
 ```
-⇀-assoc : ∀ { A : Set } { G H I : Graph A } → (G ⇀ (H ⇀ I)) ≈ ((G ⇀ H) ⇀ I)
+⇀-assoc : ∀ { A : Set } { G H I : Graph A } → G ⇀ (H ⇀ I) ≈ (G ⇀ H) ⇀ I
 ⇀-assoc = record
   { vₗ = λ { (⇀ₗ x) → ⇀ₗ (⇀ₗ x) ; (⇀ᵣ (⇀ₗ x)) → ⇀ₗ (⇀ᵣ x) ; (⇀ᵣ (⇀ᵣ x)) → ⇀ᵣ x }
   ; vᵣ = λ { (⇀ₗ (⇀ₗ x)) → ⇀ₗ x ; (⇀ₗ (⇀ᵣ x)) → ⇀ᵣ (⇀ₗ x) ; (⇀ᵣ x) → ⇀ᵣ (⇀ᵣ x) }
@@ -221,7 +228,7 @@ module ≲-Reasoning { A : Set } where
   ; eᵣ = λ { (⇀ₗ (⇀ₗ x)) → ⇀ₗ x ; (⇀ₗ (⇀ᵣ x)) → ⇀ᵣ (⇀ₗ x) ; (⇀ₗ (⇀ₗᵣ x x₁)) → ⇀ₗᵣ x (⇀ₗ x₁) ; (⇀ᵣ x) → ⇀ᵣ (⇀ᵣ x) ; (⇀ₗᵣ (⇀ₗ x) x₁) → ⇀ₗᵣ x (⇀ᵣ x₁) ; (⇀ₗᵣ (⇀ᵣ x) x₁) → ⇀ᵣ (⇀ₗᵣ x x₁) }
   }
  
-⇀-identˡ : ∀ { A : Set } { G : Graph A } → (G ⇀ ε) ≈ G
+⇀-identˡ : ∀ { A : Set } { G : Graph A } → G ⇀ ε ≈ G
 ⇀-identˡ = record
   { vₗ = λ { (⇀ₗ x) → x }
   ; vᵣ = ⇀ₗ
@@ -229,7 +236,7 @@ module ≲-Reasoning { A : Set } where
   ; eᵣ = ⇀ₗ
   }
 
-⇀-identʳ : ∀ { A : Set } { G : Graph A } → (ε ⇀ G) ≈ G
+⇀-identʳ : ∀ { A : Set } { G : Graph A } → ε ⇀ G ≈ G
 ⇀-identʳ = record
   { vₗ = λ { (⇀ᵣ x) → x }
   ; vᵣ = ⇀ᵣ
@@ -237,7 +244,7 @@ module ≲-Reasoning { A : Set } where
   ; eᵣ = ⇀ᵣ
   }
 
-⇀-congˡ : ∀ { A : Set } { G H I : Graph A } → G ≈ H → (G ⇀ I) ≈ (H ⇀ I)
+⇀-congˡ : ∀ { A : Set } { G H I : Graph A } → G ≈ H → G ⇀ I ≈ H ⇀ I
 ⇀-congˡ G≈H = record
                { vₗ = λ { (⇀ₗ x) → ⇀ₗ (_≈_.vₗ G≈H x) ; (⇀ᵣ x) → ⇀ᵣ x }
                ; vᵣ = λ { (⇀ₗ x) → ⇀ₗ (_≈_.vᵣ G≈H x) ; (⇀ᵣ x) → ⇀ᵣ x }
@@ -245,7 +252,7 @@ module ≲-Reasoning { A : Set } where
                ; eᵣ = λ { (⇀ₗ x) → ⇀ₗ (_≈_.eᵣ G≈H x) ; (⇀ᵣ x) → ⇀ᵣ x ; (⇀ₗᵣ x x₁) → ⇀ₗᵣ (_≈_.vᵣ G≈H x) x₁ }
                }
 
-⇀-congʳ : ∀ { A : Set } { G H I : Graph A } → H ≈ I → (G ⇀ H) ≈ (G ⇀ I)
+⇀-congʳ : ∀ { A : Set } { G H I : Graph A } → H ≈ I → G ⇀ H ≈ G ⇀ I
 ⇀-congʳ G≈H = record
                { vₗ = λ { (⇀ₗ x) → ⇀ₗ x ; (⇀ᵣ x) → ⇀ᵣ (_≈_.vₗ G≈H x) }
                ; vᵣ = λ { (⇀ₗ x) → ⇀ₗ x ; (⇀ᵣ x) → ⇀ᵣ (_≈_.vᵣ G≈H x) }
@@ -253,13 +260,13 @@ module ≲-Reasoning { A : Set } where
                ; eᵣ = λ { (⇀ₗ x) → ⇀ₗ x ; (⇀ᵣ x) → ⇀ᵣ (_≈_.eᵣ G≈H x) ; (⇀ₗᵣ x x₁) → ⇀ₗᵣ x (_≈_.vᵣ G≈H x₁) }
                }
 
-⇀-congˡ-≲ : ∀ { A : Set } { G H I : Graph A } → G ≲ H → (G ⇀ I) ≲ (H ⇀ I)
+⇀-congˡ-≲ : ∀ { A : Set } { G H I : Graph A } → G ≲ H → G ⇀ I ≲ H ⇀ I
 ⇀-congˡ-≲ G≲H = record
                  { vₗ = λ { (⇀ₗ x) → ⇀ₗ (_≲_.vₗ G≲H x) ; (⇀ᵣ x) → ⇀ᵣ x }
                  ; eₗ = λ { (⇀ₗ x) → ⇀ₗ (_≲_.eₗ G≲H x) ; (⇀ᵣ x) → ⇀ᵣ x ; (⇀ₗᵣ x x₁) → ⇀ₗᵣ (_≲_.vₗ G≲H x) x₁ }
                  }
 
-⇀-congʳ-≲ : ∀ { A : Set } { G H I : Graph A } → H ≲ I → (G ⇀ H) ≲ (G ⇀ I)
+⇀-congʳ-≲ : ∀ { A : Set } { G H I : Graph A } → H ≲ I → G ⇀ H ≲ G ⇀ I
 ⇀-congʳ-≲ H≲I = record
                  { vₗ = λ { (⇀ₗ x) → ⇀ₗ x ; (⇀ᵣ x) → ⇀ᵣ (_≲_.vₗ H≲I x) }
                  ; eₗ = λ { (⇀ₗ x) → ⇀ₗ x ; (⇀ᵣ x) → ⇀ᵣ (_≲_.eₗ H≲I x) ; (⇀ₗᵣ x x₁) → ⇀ₗᵣ x (_≲_.vₗ H≲I x₁) }
@@ -269,7 +276,7 @@ module ≲-Reasoning { A : Set } where
 ⇀ is associative and ε is an identity element
 
 ```
-⇀+-dist : ∀ { A : Set } { G H I : Graph A } → (G ⇀ (H + I)) ≈ ((G ⇀ H) + (G ⇀ I))
+⇀+-dist : ∀ { A : Set } { G H I : Graph A } → G ⇀ (H + I) ≈ G ⇀ H + G ⇀ I
 ⇀+-dist = record
             { vₗ = λ { (⇀ₗ x) → +ₗ (⇀ₗ x) ; (⇀ᵣ (+ₗ x)) → +ₗ (⇀ᵣ x) ; (⇀ᵣ (+ᵣ x)) → +ᵣ (⇀ᵣ x) }
             ; vᵣ = λ { (+ₗ (⇀ₗ x)) → ⇀ₗ x ; (+ₗ (⇀ᵣ x)) → ⇀ᵣ (+ₗ x) ; (+ᵣ (⇀ₗ x)) → ⇀ₗ x ; (+ᵣ (⇀ᵣ x)) → ⇀ᵣ (+ᵣ x) }
@@ -277,7 +284,7 @@ module ≲-Reasoning { A : Set } where
             ; eᵣ = λ { (+ₗ (⇀ₗ x)) → ⇀ₗ x ; (+ₗ (⇀ᵣ x)) → ⇀ᵣ (+ₗ x) ; (+ₗ (⇀ₗᵣ x x₁)) → ⇀ₗᵣ x (+ₗ x₁) ; (+ᵣ (⇀ₗ x)) → ⇀ₗ x ; (+ᵣ (⇀ᵣ x)) → ⇀ᵣ (+ᵣ x) ; (+ᵣ (⇀ₗᵣ x x₁)) → ⇀ₗᵣ x (+ᵣ x₁) }
             }
 
-+⇀-dist : ∀ { A : Set } { G H I : Graph A } → ((G + H) ⇀ I) ≈ ((G ⇀ I) + (H ⇀ I))
++⇀-dist : ∀ { A : Set } { G H I : Graph A } → (G + H) ⇀ I ≈ G ⇀ I + H ⇀ I
 +⇀-dist = record
             { vₗ = λ { (⇀ₗ (+ₗ x)) → +ₗ (⇀ₗ x) ; (⇀ₗ (+ᵣ x)) → +ᵣ (⇀ₗ x) ; (⇀ᵣ x) → +ₗ (⇀ᵣ x) }
             ; vᵣ = λ { (+ₗ (⇀ₗ x)) → ⇀ₗ (+ₗ x) ; (+ₗ (⇀ᵣ x)) → ⇀ᵣ x ; (+ᵣ (⇀ₗ x)) → ⇀ₗ (+ᵣ x) ; (+ᵣ (⇀ᵣ x)) → ⇀ᵣ x }
@@ -285,7 +292,7 @@ module ≲-Reasoning { A : Set } where
             ; eᵣ = λ { (+ₗ (⇀ₗ x)) → ⇀ₗ (+ₗ x) ; (+ₗ (⇀ᵣ x)) → ⇀ᵣ x ; (+ₗ (⇀ₗᵣ x x₁)) → ⇀ₗᵣ (+ₗ x) x₁ ; (+ᵣ (⇀ₗ x)) → ⇀ₗ (+ᵣ x) ; (+ᵣ (⇀ᵣ x)) → ⇀ᵣ x ; (+ᵣ (⇀ₗᵣ x x₁)) → ⇀ₗᵣ (+ᵣ x) x₁ }
             }
 
-⇀-decomp : ∀ { A : Set } { G H I : Graph A } → (G ⇀ (H ⇀ I)) ≈ ((G ⇀ H) + ((G ⇀ I) + (H ⇀ I)))
+⇀-decomp : ∀ { A : Set } { G H I : Graph A } → G ⇀ (H ⇀ I) ≈ G ⇀ H + (G ⇀ I + H ⇀ I)
 ⇀-decomp = record
              { vₗ = λ { (⇀ₗ x) → +ₗ (⇀ₗ x) ; (⇀ᵣ x) → +ᵣ (+ᵣ x) }
              ; vᵣ = λ { (+ₗ (⇀ₗ x)) → ⇀ₗ x ; (+ₗ (⇀ᵣ x)) → ⇀ᵣ (⇀ₗ x) ; (+ᵣ (+ₗ (⇀ₗ x))) → ⇀ₗ x ; (+ᵣ (+ₗ (⇀ᵣ x))) → ⇀ᵣ (⇀ᵣ x) ; (+ᵣ (+ᵣ x)) → ⇀ᵣ x }
@@ -295,7 +302,7 @@ module ≲-Reasoning { A : Set } where
 ```
 
 ```
-+-congʳ-alt : ∀ { A : Set } { G H I : Graph A } → H ≈ I → (G + H) ≈ (G + I)
++-congʳ-alt : ∀ { A : Set } { G H I : Graph A } → H ≈ I → G + H ≈ G + I
 +-congʳ-alt {_} {G} {H} {I} H≈I =
   begin
     G + H
@@ -308,7 +315,7 @@ module ≲-Reasoning { A : Set } where
   ∎
   where open ≈-Reasoning
 
-+-idem : ∀ { A : Set } { G : Graph A } → (G + G) ≈ G
++-idem : ∀ { A : Set } { G : Graph A } → G + G ≈ G
 +-idem {_} {G} =
   begin
     G + G
@@ -330,6 +337,38 @@ module ≲-Reasoning { A : Set } where
     G ⇀ ε
   ≈⟨ ⇀-identˡ ⟩
     G
+  ∎
+  where open ≈-Reasoning
+
++-absorp : ∀ { A : Set } { G H : Graph A } → G ⇀ H + G + H ≈ G ⇀ H
++-absorp {_} {G} {H} =
+  begin
+    G ⇀ H + G + H
+  ≈⟨ +-congˡ (+-congʳ (≈-comm ⇀-identˡ)) ⟩
+    G ⇀ H + G ⇀ ε + H
+  ≈⟨ +-congʳ (≈-comm ⇀-identˡ) ⟩
+    G ⇀ H + G ⇀ ε + H ⇀ ε
+  ≈⟨ ≈-comm +-assoc ⟩
+    G ⇀ H + (G ⇀ ε + H ⇀ ε)
+  ≈⟨ ≈-comm ⇀-decomp ⟩
+    G ⇀ (H ⇀ ε)
+  ≈⟨ ⇀-congʳ ⇀-identˡ ⟩
+    G ⇀ H
+  ∎
+  where open ≈-Reasoning
+
+⇀-sat : ∀ { A : Set } { G : Graph A } → G ⇀ G ⇀ G ≈ G ⇀ G
+⇀-sat {_} {G} =
+  begin
+    G ⇀ G ⇀ G
+  ≈⟨ ≈-comm ⇀-assoc ⟩
+    G ⇀ (G ⇀ G)
+  ≈⟨ ⇀-decomp ⟩
+    G ⇀ G + (G ⇀ G + G ⇀ G)
+  ≈⟨ +-congʳ +-idem ⟩
+    G ⇀ G + G ⇀ G
+  ≈⟨ +-idem ⟩
+    G ⇀ G
   ∎
   where open ≈-Reasoning
 ```
