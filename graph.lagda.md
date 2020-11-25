@@ -531,4 +531,47 @@ clique-++-connect (x ∷ xs) ys =
     G ⇀ H
   ∎)
   where open ≈-Reasoning
+
++-mono : ∀ { A : Set } { G H I : Graph A } → G ≲ H → G + I ≲ H + I
++-mono {_} {G} {H} {I} G≲H = ≲-def-from (
+  begin
+    G + I + (H + I)
+  ≈⟨ +-congˡ +-comm ⟩
+    I + G + (H + I)
+  ≈⟨ +-assoc ⟩
+    I + G + H + I
+  ≈⟨ +-congˡ (≈-comm +-assoc) ⟩
+    I + (G + H) + I
+  ≈⟨ +-congˡ (+-congʳ (≲-def-to G≲H)) ⟩
+    I + H + I
+  ≈⟨ +-congˡ +-comm ⟩
+    H + I + I
+  ≈⟨ ≈-comm +-assoc ⟩
+    H + (I + I)
+  ≈⟨ +-congʳ +-idem ⟩
+    H + I
+  ∎)
+  where open ≈-Reasoning
+
+⇀-monoˡ : ∀ { A : Set } { G H I : Graph A } → G ≲ H → G ⇀ I ≲ H ⇀ I
+⇀-monoˡ {_} {G} {H} {I} G≲H = ≲-def-from (
+  begin
+    G ⇀ I + H ⇀ I
+  ≈⟨ ≈-comm +⇀-dist ⟩
+    (G + H) ⇀ I
+  ≈⟨ ⇀-congˡ (≲-def-to G≲H) ⟩
+    H ⇀ I
+  ∎)
+  where open ≈-Reasoning
+
+⇀-monoʳ : ∀ { A : Set } { G H I : Graph A } → G ≲ H → I ⇀ G ≲ I ⇀ H
+⇀-monoʳ {_} {G} {H} {I} G≲H = ≲-def-from (
+  begin
+    I ⇀ G + I ⇀ H
+  ≈⟨ ≈-comm ⇀+-dist ⟩
+    I ⇀ (G + H)
+  ≈⟨ ⇀-congʳ (≲-def-to G≲H) ⟩
+    I ⇀ H
+  ∎)
+  where open ≈-Reasoning
 ```
