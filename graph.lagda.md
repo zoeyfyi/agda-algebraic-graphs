@@ -478,3 +478,57 @@ clique-++-connect (x ∷ xs) ys =
   where open ≈-Reasoning
 ```
 
+```
+≲-def-to : ∀ { A : Set } { G H : Graph A } → G ≲ H → G + H ≈ H
+≲-def-to G≲H = record
+                 { vₗ = λ { (+ₗ x) → _≲_.vₗ G≲H x ; (+ᵣ x) → x }
+                 ; vᵣ = +ᵣ
+                 ; eₗ = λ { (+ₗ x) → _≲_.eₗ G≲H x ; (+ᵣ x) → x }
+                 ; eᵣ = +ᵣ
+                 }
+
+≲-def-from : ∀ { A : Set } { G H : Graph A } → G + H ≈ H → G ≲ H
+≲-def-from G+H≈H = record
+                     { vₗ = λ z → _≈_.vₗ G+H≈H (+ₗ z)
+                     ; eₗ = λ z → _≈_.eₗ G+H≈H (+ₗ z)
+                     }
+```
+
+```
+≲-least : ∀ { A : Set } { G : Graph A } → ε ≲ G
+≲-least {_} {G} = ≲-def-from (
+  begin
+    ε + G
+  ≈⟨ +-identʳ ⟩
+    G
+  ∎)
+  where open ≈-Reasoning
+
++-order : ∀ { A : Set } { G H : Graph A } → G ≲ G + H
++-order {_} {G} {H} = ≲-def-from (
+  begin
+    G + (G + H)
+  ≈⟨ +-assoc ⟩
+    G + G + H
+  ≈⟨ +-congˡ +-idem ⟩
+    G + H
+  ∎)
+  where open ≈-Reasoning
+
++⇀-order : ∀ { A : Set } { G H : Graph A } → G + H ≲ G ⇀ H
++⇀-order {_} {G} {H} = ≲-def-from (
+  begin
+    G + H + G ⇀ H
+  ≈⟨ +-congˡ +-comm ⟩
+    H + G + G ⇀ H
+  ≈⟨ +-comm ⟩
+    G ⇀ H + (H + G)
+  ≈⟨ +-congʳ +-comm ⟩
+    G ⇀ H + (G + H)
+  ≈⟨ +-assoc ⟩
+    G ⇀ H + G + H
+  ≈⟨ +-absorp ⟩
+    G ⇀ H
+  ∎)
+  where open ≈-Reasoning
+```
